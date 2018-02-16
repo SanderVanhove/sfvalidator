@@ -7,7 +7,7 @@
 		<title>Data set validation</title>
 		<meta name="description" content="Validation of datasets">
 		<meta name="author" content="IDLab">
-		<script src="ldfetch.js"></script>
+		<script src="/bundle.js"></script>
 
 		<style type="text/css">
 			li{
@@ -62,81 +62,7 @@
 		</form>
 
 		<script>
-			//Dataset url
-			//var url = "https://linked.open.gent/parking?page=2018-02-14T13:00:00";
-
-			var check_url = function(){
-				url = document.getElementById("urlinput").value;
-
-				//Analyse headers
-				//********************************************************************
-				var check_header = function(line_name, element_id, text, response){
-					var che = document.getElementById(element_id);
-					if(response.headers.get(line_name)){
-						che.classList.add("checked");
-						che.innerHTML = text + ": " + response.headers.get(line_name);
-					}else{
-						che.classList.add("failed");
-					}
-				}
-
-				var accessable = null;
-				var check_accessable = function(){
-					if(accessable)
-						document.getElementById("accessable").classList.add("checked");
-					else if(accessable == null)
-						accessable = true;
-					else
-						document.getElementById("accessable").classList.add("failed");
-				}
-
-				/*var options = { 
-						headers: new Headers({
-		    					"Access-Control-Allow-Origin": "\*",
-		    					"Access-Control-Request-Headers":"\*"
-		  				}
-	  				)};*/
-
-	  			var options = {}
-
-				
-				fetch(url, options).then(response => {
-						for (var pair of response.headers.entries()) {
-					        console.log(pair[0]+ ': '+ pair[1]);
-					    }
-
-						check_header("Cache-Control", "cacheheaders", "Cache header", response);
-						check_header("ETag", "etagheaders", "ETag", response);
-						check_header("Access-Control-Allow-Origin", "corsheaders", "CORS headers", response);
-
-						check_accessable();
-					}).catch(error => {
-						document.getElementById("cacheheaders").classList.add("failed");
-						document.getElementById("etagheaders").classList.add("failed");
-						document.getElementById("corsheaders").classList.add("failed");
-					});
-
-
-				//Parse the dataset
-				//*********************************************************************
-				var ldfetch = new window.ldfetch();
-
-				ldfetch.get(url).then(response => {
-					document.getElementById("rdf").classList.add("checked");
-					console.log("parsed");
-					console.log(response);
-
-					for (var triple in response.triples)
-						if(triple.predicate == "http://dublincore.org/2012/06/14/dcterms#license")
-							document.getElementById("license").classList.add("checked");
-					if(!document.getElementById("license").classList.contains("checked"))
-						document.getElementById("license").classList.add("failed");
-
-					check_accessable();
-				}).catch(error => {
-					document.getElementById("rdf").classList.add("failed");
-				});
-			}
+			var validator = new window.validator();
 		</script>
 	</body>
 </html>

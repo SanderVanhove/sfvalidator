@@ -15,5 +15,10 @@
   "bugs": {
     "url": "https://github.com/Lamasaurus/sfvalidator/issues"
   },
-  "homepage": "https://github.com/Lamasaurus/sfvalidator#readme"
+  "homepage": "https://github.com/Lamasaurus/sfvalidator#readme",
+  "dependencies": {
+    "detect-browser": "^2.0.0",
+    "ldfetch": "0.0.10",
+    "node-fetch": "^2.0.0"
+  }
 }
