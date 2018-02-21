@@ -16,13 +16,13 @@ class Report{
 			first_attempt: new Score(),
 			seconde_attempt: new Score(),
 			get score(){
-				if(first_attempt.passed && seconde_attempt.passed)
+				if(this.first_attempt.passed && this.seconde_attempt.passed)
 					return new Score(1, "Page is accessable");
-				else if(!first_attempt.passed && !seconde_attempt.passed)
+				else if(!this.first_attempt.passed && !this.seconde_attempt.passed)
 					return new Score(-1, "Both attempts failed");
-				else if(!first_attempt.passed)
+				else if(!this.first_attempt.passed)
 					return new Score(-1, "First attempt failed");
-				else if(!seconde_attempt.passed)
+				else if(!this.seconde_attempt.passed)
 					return new Score(-1, "Seconde attempt failed");
 			}
 		};
