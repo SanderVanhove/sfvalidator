@@ -64,27 +64,27 @@ sfv.validate_url("https:://www.example.com").then(result => { console.log(result
 			validator.validate_url("https:://www.example.com").then(result => { console.log(result); }
 		</script>
 		
-##Output
-```json
+## Output
+```javascript
 {
 	accessable: { 
-	 	first_attempt: Score,
-	     	seconde_attempt: Score
-	  },
-	  license: Score,
-	  headers: { 
-	  	cache: Score,
-	     	etag: Score,
-	     	cors: Score
-	  },
-	  rdf: Score,
-	  fragmented: Score,
-	  timestamped: Score
+		first_attempt: Score,
+	  	seconde_attempt: Score
+	},
+	license: Score,
+	headers: { 
+		cache: Score,
+	   	etag: Score,
+	   	cors: Score
+	},
+	rdf: Score,
+	fragmented: Score,
+	timestamped: Score
 }
 ```
 
 A `Score` is of this structure:
-```json
+```javascript
 {
 	score: int -> -1 if failed, 0 if not checked or 1 if passed
 	message: Object -> the message from the validator
