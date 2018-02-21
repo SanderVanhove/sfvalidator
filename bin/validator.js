@@ -20,7 +20,7 @@ class Report{
 					return 1;
 				else
 					return -1;
-			}
+			},
 			get message(){
 				if(this.first_attempt.passed && this.seconde_attempt.passed)
 					return "Page is accessable";
