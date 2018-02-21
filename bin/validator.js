@@ -162,7 +162,7 @@ class Validator{
 					this.report.timestamped = new Score(1, "Timestamp found");
 
 		if(!this.report.timestamped.pass)
-			this.report.license = new Score(-1, "No timestamps found");
+			this.report.timestamped = new Score(-1, "No timestamps found");
 	}
 }
 
