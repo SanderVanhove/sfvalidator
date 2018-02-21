@@ -2,7 +2,7 @@
   "name": "sfvalidator",
   "version": "1.0.0",
   "description": "in-browser dataset  validation",
-  "main": "index.js",
+  "main": "bin/validator.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
