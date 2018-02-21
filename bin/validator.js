@@ -15,7 +15,7 @@ class Report{
 		this.accessable = {
 			first_attempt: new Score(),
 			seconde_attempt: new Score(),
-			get commbined(){
+			get score(){
 				if(first_attempt.passed && seconde_attempt.passed)
 					return new Score(1, "Page is accessable");
 				else if(!first_attempt.passed && !seconde_attempt.passed)
@@ -30,6 +30,7 @@ class Report{
 		this.license = new Score();
 
 		this.headers = {
+			islist: true,
 			cache: new Score(),
 			etag: new Score(),
 			cors: new Score()
