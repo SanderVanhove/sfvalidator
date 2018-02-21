@@ -2,42 +2,95 @@
 
 In-browser dataset validation.
 
-### Juridisch
+## Goals
+Validating data sets against the rules listed [here](https://smart.flanders.be/resources/) within a terminal or browser.
+#### Legal
 * Check license:
-[Look for DCAT license](https://www.w3.org/TR/vocab-dcat/#Property:catalog_license)
+[Look for DCAT licenses](https://www.w3.org/TR/vocab-dcat/#Property:catalog_license)
 
-### Technisch
+#### Technical
 
-* HTTP cache header analysis:
-[AJAX request](https://stackoverflow.com/questions/220231/accessing-the-web-pages-http-headers-in-javascript), [check header.](https://stackoverflow.com/questions/22949870/how-to-detect-if-ajax-error-is-access-control-allow-origin-or-the-file-is-actual)
+* Fetches the page using [fetch-ponyfill](https://www.npmjs.com/package/fetch-ponyfill)
 Check for `Cache-Control`, `ETag` HTTP headers.
 
 * CORS detection:
 [Is only in header if CORS is supported.](https://stackoverflow.com/questions/19325314/how-to-detect-cross-origin-cors-error-vs-other-types-of-errors-for-xmlhttpreq)
 Detect `Access-Control-Allow-Origin` HTTP header.
 
-```javascript
-fetch("https://www.pietercolpaert.be").then(function(response){
-
-	for (var pair of response.headers.entries()) {
-		console.log(pair[0]+ ': '+ pair[1]);
-	} 
-    
-});
-```
-
-### Syntactisch
+#### Syntactic
 
 * Check if RDF1.1:
-[Parse with N3 and look for errors.](https://www.npmjs.com/package/n3#parsing)
+[Parse with ldfetch](https://www.npmjs.com/package/ldfetch)
 
-### Semantisch
+#### Semantic
 
 * Maximum use of standards
 
-### Querying
+#### Querying
 
 * Fragmented data:
 Check for hydra links and timestamps
 
 * European DCAT-AP standard
+
+## Usage
+#### Node
+First install the package:
+```
+npm i -s sfvalidator
+```
+Then require it and start validating:
+```javascript
+const sfv = require("sfvalidator")
+
+sfv.validate_url("https:://www.example.com").then(result => { console.log(result); }
+```
+
+#### In-browser
+1. Firstly install or download the module.
+2. Secondely install browserify:
+
+   		npm i -g browserify
+   
+3. Then use browserify to bundle the module and its dependencies:
+			
+		browserify <path-to-module>/bin/validator_browser.js -o bundle.js
+
+4. Now you are able to include this bundle as a script in your webpage and use it:
+
+		<script src="bundle.js"></script>
+		<script>
+			validator = window.sfvalidator;
+			validator.validate_url("https:://www.example.com").then(result => { console.log(result); }
+		</script>
+		
+##Output
+```json
+{
+	accessable: { 
+	 	first_attempt: Score,
+	     	seconde_attempt: Score
+	  },
+	  license: Score,
+	  headers: { 
+	  	cache: Score,
+	     	etag: Score,
+	     	cors: Score
+	  },
+	  rdf: Score,
+	  fragmented: Score,
+	  timestamped: Score
+}
+```
+
+A `Score` is of this structure:
+```json
+{
+	score: int -> -1 if failed, 0 if not checked or 1 if passed
+	message: Object -> the message from the validator
+}
+```
+The `message` attribute can have different values when the element passed the validation:
+	- In case of `accessable`, `rdf` and `timestamped` it is just a string.
+	- In case of the `headers` it is the value of the header in the returned package.
+	- In case of `license` and `fragmented` it is a list of found licenses and hydra links respectfully.

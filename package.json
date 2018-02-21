@@ -18,7 +18,8 @@
   "homepage": "https://github.com/Lamasaurus/sfvalidator#readme",
   "dependencies": {
     "detect-browser": "^2.0.0",
+    "fetch-ponyfill": "^5.0.1",
     "ldfetch": "0.0.10",
-    "node-fetch": "^2.0.0"
+    "whatwg-fetch": "^2.0.3"
   }
 }
