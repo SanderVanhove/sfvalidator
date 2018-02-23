@@ -11,7 +11,7 @@ class Score{
 }
 
 class Report{
-	constructor(){
+	constructor(config){
 		this.accessable = {
 			first_attempt: new Score(),
 			seconde_attempt: new Score(),
@@ -35,12 +35,10 @@ class Report{
 
 		this.license = new Score();
 
-		this.headers = {
-			islist: true,
-			cache: new Score(),
-			etag: new Score(),
-			cors: new Score()
-		}
+		this.headers = {};
+
+		for(var header of config.headers)
+			this.headers[header] = new Score();
 
 		this.rdf = new Score();
 		this.fragmented = new Score();
@@ -50,16 +48,18 @@ class Report{
 
 class Validator{
 	
-	constructor(options = {protocol:'http:'}){
+	constructor(options = {}){
 		this.options = options;
 
 		this.detect_browser = require('detect-browser').detect();
 		this.ldfetch = require("ldfetch");
 		this.fetch = require('fetch-ponyfill')(options).fetch;
+
+		this.config = require("../config.js");
 	}
 
 	validate_url(url){
-		this.report = new Report();
+		this.report = new Report(this.config);
 	
 		return new Promise((fulfill) => {
 			this.validate_headers(url)
@@ -74,17 +74,15 @@ class Validator{
 	validate_headers(url){
 		return new Promise(fulfill => {
 				this.fetch(url, this.options).then(response => {
-						var headers_to_check_for = [{name: "Cache-Control", var: "cache"}, 
-													{name: "ETag", var: "etag"}];
 
-						for(var header of headers_to_check_for)
-							this.check_header(header.name, header.var, response);
+						for(var header of this.config.headers)
+							this.check_header(header, response);
 
 						//Check if we are in a browser, if so and the page loads we know that cors is set on the server because browser doesn't allow otherwise
 						if(this.detect_browser.name != "node")
-							this.report.headers.cors = new Score(1, "Page loaded, so assumed that CORS is supported");
+							this.report.headers.cors = new Score(1, "Page loade d, so assumed that CORS is supported");
 						else
-							this.check_header("Access-Control-Allow-Origin", "cors", response);
+							this.check_header("Access-Control-Allow-Origin", response);
 
 						this.report.accessable.first_attempt = new Score(1, "Page was accessable");
 						fulfill(this.report);
@@ -95,11 +93,11 @@ class Validator{
 			});
 	}
 
-	check_header(header_name, header_id, response){
+	check_header(header_name, response){
 		if(response.headers.get(header_name)){
-			this.report.headers[header_id] = new Score(1, response.headers.get(header_name));
+			this.report.headers[header_name] = new Score(1, response.headers.get(header_name));
 		}else{
-			this.report.headers[header_id] = new Score(-1, "Header not found");
+			this.report.headers[header_name] = new Score(-1, "Header not found");
 		}
 	}
 
@@ -120,11 +118,10 @@ class Validator{
 	}
 
 	validate_license(triples){
-		var licenses_to_check = ["https://purl.org/dc/terms/license", "https://creativecommons.org/ns#license", "http://purl.org/dc/terms/license", "http://creativecommons.org/ns#license"]
 		var licenses_found = [];
 
 		for (var triple of triples)
-			for(var license_type of licenses_to_check)
+			for(var license_type of this.config.licenses)
 				if(triple.predicate == license_type)
 					licenses_found.push(triple.object)
 
@@ -135,12 +132,10 @@ class Validator{
 	}
 
 	validate_fragmentation(triples){
-		var hydra_to_check = ["https://www.w3.org/ns/hydra/core#previous", "https://www.w3.org/ns/hydra/core#next", "https://www.w3.org/ns/hydra/core#search", 
-								"http://www.w3.org/ns/hydra/core#previous", "http://www.w3.org/ns/hydra/core#next", "http://www.w3.org/ns/hydra/core#search"]
 		var hydra_links_found = [];
 
 		for (var triple of triples)
-			for(var hydra_type of hydra_to_check)
+			for(var hydra_type of this.config.hydra_links)
 				if(triple.predicate == hydra_type)
 					hydra_links_found.push({
 						hydra: hydra_type,
@@ -154,10 +149,8 @@ class Validator{
 	}
 
 	validate_timestamped(triples){
-		var timestamps_to_check = ["http://www.w3.org/ns/prov#generatedAtTime", "https://www.w3.org/ns/prov#generatedAtTime"]
-
 		for (var triple of triples)
-			for(var timestamp_type of timestamps_to_check)
+			for(var timestamp_type of this.config.timestamps)
 				if(triple.predicate == timestamp_type)
 					this.report.timestamped = new Score(1, "Timestamp found");
 
