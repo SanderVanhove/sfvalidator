@@ -18,7 +18,7 @@ module.exports = {
 		"http://www.w3.org/ns/hydra/core#search"
 	],
 	timestamps: [
-		"http://www.w3.org/ns/prov#generatedAtTime", 
+		"http://www.w3.org/ns/prov#generatedAtTime",
 		"https://www.w3.org/ns/prov#generatedAtTime"
 	]
 }

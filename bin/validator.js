@@ -6,7 +6,7 @@ class Score{
 	}
 
 	get passed(){
-		return this.score > 0
+		return (this.score > 0)
 	}
 }
 
@@ -103,6 +103,12 @@ class Validator{
 
 	validate_rdf(url){
 		return new Promise(fulfill => {(new this.ldfetch()).get(url).then(response => {
+			if(response.triples.length == 0){
+				this.report.rdf = new Score(-1, "No triples found");
+				fulfill(this.report);
+				return;
+			}
+
 			this.report.rdf = new Score(1, "Parsed correctely");
 
 			this.validate_license(response.triples);
@@ -151,10 +157,10 @@ class Validator{
 	validate_timestamped(triples){
 		for (var triple of triples)
 			for(var timestamp_type of this.config.timestamps)
-				if(triple.predicate == timestamp_type)
+				if(triple.predicate === timestamp_type)
 					this.report.timestamped = new Score(1, "Timestamp found");
 
-		if(!this.report.timestamped.pass)
+		if(!this.report.timestamped.passed)
 			this.report.timestamped = new Score(-1, "No timestamps found");
 	}
 }
