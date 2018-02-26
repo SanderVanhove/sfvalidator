@@ -23,7 +23,7 @@ class Report{
 			},
 			get message(){
 				if(this.first_attempt.passed && this.seconde_attempt.passed)
-					return "Page is accessable";
+					return "Page is accessible";
 				else if(!this.first_attempt.passed && !this.seconde_attempt.passed)
 					return "Both attempts failed";
 				else if(!this.first_attempt.passed)
@@ -109,13 +109,13 @@ class Validator{
 				return;
 			}
 
-			this.report.rdf = new Score(1, "Parsed correctely");
+			this.report.rdf = new Score(1, "Parsed correctly");
 
 			this.validate_license(response.triples);
 			this.validate_fragmentation(response.triples);
 			this.validate_timestamped(response.triples);
 
-			this.report.accessable.seconde_attempt = new Score(1, "Page was accessable");
+			this.report.accessable.seconde_attempt = new Score(1, "Page was accessible");
 			fulfill(this.report);
 		}).catch(error => {
 			this.report.accessable.seconde_attempt = new Score(-1, error);
